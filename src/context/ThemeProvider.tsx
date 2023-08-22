@@ -1,24 +1,28 @@
-import React, { Component, useContext, useState } from 'react';
+import React, { Component, useContext, useState } from "react";
 
-const ThemeContext = React.createContext('dark');
+const ThemeContext = React.createContext("dark");
 
-const useThemeContext = () => useContext(ThemeContext)
+const useThemeContext = () => useContext(ThemeContext);
 
-const ThemeProvider = ({children}) => {
-  const [theme, setTheme] = useState('dark')
-
-  const changeTheme = () => {
-    const newTheme = theme === 'dark' ? 'light' : 'dark'
-    setTheme(newTheme)
-  }
-
-  const value = {theme, changeTheme}
-
-  return (
-    <ThemeContext.Provider value={value}>
-      {children}
-    </ThemeContext.Provider>
-  )
+interface Props {
+  children: React.ReactNode;
 }
 
-export { ThemeContext, ThemeProvider ,useThemeContext }
+const ThemeProvider: React.FC<Props> = ({ children }) => {
+  const [theme, setTheme] = useState("dark" as string);
+
+  const changeTheme = () => {
+    const newTheme = theme === "dark" ? "light" : "dark";
+    setTheme(newTheme);
+  };
+
+  const value = { theme, changeTheme };
+
+  return (
+    <ThemeContext.Provider value={value as any}>
+      {children}
+    </ThemeContext.Provider>
+  );
+};
+
+export { ThemeContext, ThemeProvider, useThemeContext };

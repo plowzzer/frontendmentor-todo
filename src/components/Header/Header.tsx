@@ -3,7 +3,7 @@ import { useThemeContext } from "@/context/ThemeProvider";
 import { Moon, Sun } from "lucide-react";
 
 const Header: React.FC = () => {
-  const { theme, changeTheme } = useThemeContext();
+  const { theme, changeTheme } = useThemeContext() as any;
 
   return (
     <header className="bg-gradient-to-r from-cyan-500 to-blue-500 h-80 pt-28">

@@ -1,26 +1,31 @@
-// import Image from 'next/image'
 import { Inter } from "next/font/google";
-import { useThemeContext } from "@/context/ThemeProvider";
+// import { useThemeContext } from "@/context/ThemeProvider";
 import { useEffect, useState } from "react";
-import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
-import { CheckCircle, Circle, X } from "lucide-react";
+import { CheckCircle, ChevronDown, ChevronUp, Circle, X } from "lucide-react";
 
 import Header from "@/components/Header";
 
 const inter = Inter({ subsets: ["latin"] });
 
+interface TodoItem {
+  value: string;
+  status: string;
+}
+
+interface TodoList extends Array<TodoItem> {}
+
 export default function Home() {
-  const [inputValue, setInputValue] = useState("");
-  const [todoList, setTodoList] = useState([]);
+  const [inputValue, setInputValue] = useState("" as string);
+  const [todoList, setTodoList] = useState([] as TodoList);
   const [statusShown, setStatusShown] = useState("all");
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: any) => {
     e.preventDefault();
     setTodoList((todo) => [{ value: inputValue, status: "active" }, ...todo]);
     setInputValue("");
   };
 
-  const changeStatus = (index) => {
+  const changeStatus = (index: any) => {
     const changeStatus =
       todoList[index].status === "active" ? "completed" : "active";
 
@@ -35,16 +40,50 @@ export default function Home() {
     setTodoList(newTodoList);
   };
 
-  const deleteStatus = (index) => {
+  const deleteStatus = (index: any) => {
     setTodoList(todoList.filter((_, i) => i !== index));
   };
 
   const getAllActive = () => {
-    return todoList.filter((item) => item.status !== "completed");
+    return todoList.filter((item: any) => item.status !== "completed");
   };
 
   const deleteAllCompleted = () => {
-    setTodoList(todoList.filter((item) => item.status !== "completed"));
+    setTodoList(todoList.filter((item: any) => item.status !== "completed"));
+  };
+
+  const positionUp = (index: any) => {
+    if (index === 0) {
+      return;
+    }
+
+    const movedItem = todoList.find((_, i) => index === i);
+    const remainingItems = todoList.filter((_, i) => index !== i);
+
+    const reorderedItems = [
+      ...remainingItems.slice(0, index - 1),
+      movedItem,
+      ...remainingItems.slice(index - 1),
+    ];
+
+    setTodoList(reorderedItems as TodoList);
+  };
+
+  const positionDown = (index: any) => {
+    if (index === todoList.length - 1) {
+      return;
+    }
+
+    const movedItem = todoList.find((_, i) => index === i);
+    const remainingItems = todoList.filter((_, i) => index !== i);
+
+    const reorderedItems = [
+      ...remainingItems.slice(0, index + 1),
+      movedItem,
+      ...remainingItems.slice(index + 1),
+    ];
+
+    setTodoList(reorderedItems as TodoList);
   };
 
   useEffect(() => {
@@ -86,11 +125,19 @@ export default function Home() {
             <li
               key={index}
               id={`list-item-${index}`}
-              className={`w-full flex justify-between items-start gap-4 p-4 bg-white ${
+              className={`w-full flex justify-between items-center gap-4 p-4 bg-white ${
                 statusShown !== status && statusShown !== "all" && "hidden"
               }`}
             >
-              <div className="flex gap-4 items-start">
+              <div className="flex gap-4 items-center">
+                <div className="flex flex-col ">
+                  <button onClick={() => positionUp(index)}>
+                    <ChevronUp />
+                  </button>
+                  <button onClick={() => positionDown(index)}>
+                    <ChevronDown />
+                  </button>
+                </div>
                 <button onClick={() => changeStatus(index)}>
                   {status === "active" ? <Circle /> : <CheckCircle />}
                 </button>
