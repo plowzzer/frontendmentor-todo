@@ -2,12 +2,14 @@
 import { Inter } from "next/font/google";
 import { useThemeContext } from "@/context/ThemeProvider";
 import { useEffect, useState } from "react";
+import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
+import { CheckCircle, Circle, X } from "lucide-react";
+
+import Header from "@/components/Header";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export default function Home() {
-  const { theme, changeTheme } = useThemeContext();
-
   const [inputValue, setInputValue] = useState("");
   const [todoList, setTodoList] = useState([]);
   const [statusShown, setStatusShown] = useState("all");
@@ -37,18 +39,37 @@ export default function Home() {
     setTodoList(todoList.filter((_, i) => i !== index));
   };
 
+  const getAllActive = () => {
+    return todoList.filter((item) => item.status !== "completed");
+  };
+
+  const deleteAllCompleted = () => {
+    setTodoList(todoList.filter((item) => item.status !== "completed"));
+  };
+
   useEffect(() => {
-    console.log("todo, save on navigator");
+    console.log("initial");
+    const storageTodoList = localStorage.getItem("todo:todoList");
+    if (storageTodoList) {
+      setTodoList(JSON.parse(storageTodoList));
+    }
+  }, []);
+
+  useEffect(() => {
+    console.log("save on storage");
+    const saveOnStorage = setTimeout(() => {
+      const fullList = JSON.stringify(todoList);
+      localStorage.setItem("todo:todoList", fullList);
+    }, 3000);
+
+    return () => clearTimeout(saveOnStorage);
   }, [todoList]);
 
   return (
-    <main className={`p-24 ${inter.className}`}>
-      <header className="container mx-auto flex justify-between items-center ">
-        <h1 className="text-2xl font-bold uppercase">TODO</h1>
-        <button onClick={changeTheme}>{theme}</button>
-      </header>
+    <main className={`${inter.className}`}>
+      <Header />
 
-      <div className="container mx-auto">
+      <div className="container mx-auto -mt-24">
         <form onSubmit={handleSubmit}>
           <input
             className="w-full min-h-3 shadow-lg p-4 rounded"
@@ -59,44 +80,57 @@ export default function Home() {
             placeholder="Create a new todo..."
           />
         </form>
-      </div>
 
-      <div className="container mx-auto">
-        <ul>
+        <ul className="mt-12 divide-y divide-gray-200 rounded">
           {todoList.map(({ value, status }, index) => (
             <li
               key={index}
-              className={`flex gap-2 p-2 ${
+              id={`list-item-${index}`}
+              className={`w-full flex justify-between items-start gap-4 p-4 bg-white ${
                 statusShown !== status && statusShown !== "all" && "hidden"
               }`}
             >
-              <button onClick={() => changeStatus(index)}>{status}</button>
-              <span className={`${status === "completed" && "line-through"}`}>
-                {value}
-              </span>
-              <button onClick={() => deleteStatus(index)}>DEL</button>
+              <div className="flex gap-4 items-start">
+                <button onClick={() => changeStatus(index)}>
+                  {status === "active" ? <Circle /> : <CheckCircle />}
+                </button>
+                <span className={`${status === "completed" && "line-through"}`}>
+                  {value}
+                </span>
+              </div>
+              <button onClick={() => deleteStatus(index)}>
+                <X />
+              </button>
             </li>
           ))}
         </ul>
-        <div className="flex gap-3">
-          <h5>Status:</h5>
-          <button
-            className={`${statusShown === "all" && "font-bold "}`}
-            onClick={() => setStatusShown("all")}
-          >
-            All
-          </button>
-          <button
-            className={`${statusShown === "active" && "font-bold "}`}
-            onClick={() => setStatusShown("active")}
-          >
-            Active
-          </button>
-          <button
-            className={`${statusShown === "completed" && "font-bold "}`}
-            onClick={() => setStatusShown("completed")}
-          >
-            Completed
+
+        <div className="w-full flex justify-between items-start mt-4 gap-4 bg-gray-100 rounded px-8 py-3">
+          <h5>{getAllActive().length} items left</h5>
+
+          <div className="flex gap-2">
+            <button
+              className={`${statusShown === "all" && "font-bold "}`}
+              onClick={() => setStatusShown("all")}
+            >
+              All
+            </button>
+            <button
+              className={`${statusShown === "active" && "font-bold "}`}
+              onClick={() => setStatusShown("active")}
+            >
+              Active
+            </button>
+            <button
+              className={`${statusShown === "completed" && "font-bold "}`}
+              onClick={() => setStatusShown("completed")}
+            >
+              Completed
+            </button>
+          </div>
+
+          <button className="font-bold" onClick={deleteAllCompleted}>
+            Clear All Completed
           </button>
         </div>
       </div>
