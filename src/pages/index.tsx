@@ -108,7 +108,7 @@ export default function Home() {
     <main className={`${inter.className}`}>
       <Header />
 
-      <div className="container mx-auto -mt-24">
+      <div className="container mx-auto p-2 -mt-40">
         <form onSubmit={handleSubmit}>
           <input
             className="w-full min-h-3 shadow-lg p-4 rounded"
@@ -132,51 +132,77 @@ export default function Home() {
               <div className="flex gap-4 items-center">
                 <div className="flex flex-col ">
                   <button onClick={() => positionUp(index)}>
-                    <ChevronUp />
+                    <ChevronUp className="text-slate-300" />
                   </button>
                   <button onClick={() => positionDown(index)}>
-                    <ChevronDown />
+                    <ChevronDown className="text-slate-300" />
                   </button>
                 </div>
                 <button onClick={() => changeStatus(index)}>
-                  {status === "active" ? <Circle /> : <CheckCircle />}
+                  {status === "active" ? (
+                    <Circle className="text-blue-400" />
+                  ) : (
+                    <CheckCircle className="text-slate-400" />
+                  )}
                 </button>
-                <span className={`${status === "completed" && "line-through"}`}>
+                <span
+                  className={`${
+                    status === "completed" && "line-through text-slate-400"
+                  }`}
+                >
                   {value}
                 </span>
               </div>
               <button onClick={() => deleteStatus(index)}>
-                <X />
+                <X className="text-red-600" />
               </button>
             </li>
           ))}
         </ul>
 
-        <div className="w-full flex justify-between items-start mt-4 gap-4 bg-gray-100 rounded px-8 py-3">
-          <h5>{getAllActive().length} items left</h5>
+        <div className="w-full flex justify-between items-center mt-4 gap-4 bg-gray-100/50 rounded px-8 py-3">
+          <h5>
+            {getAllActive().length}{" "}
+            {getAllActive().length === 1 ? "item" : "items"} left
+          </h5>
 
           <div className="flex gap-2">
             <button
-              className={`${statusShown === "all" && "font-bold "}`}
+              className={`${
+                statusShown === "all"
+                  ? "font-bold bg-sky-500/75"
+                  : "bg-sky-500/25"
+              } rounded-full py-1 px-2 text-white`}
               onClick={() => setStatusShown("all")}
             >
               All
             </button>
             <button
-              className={`${statusShown === "active" && "font-bold "}`}
+              className={`${
+                statusShown === "active"
+                  ? "font-bold bg-sky-500/75"
+                  : "bg-sky-500/25"
+              } rounded-full py-1 px-2 text-white`}
               onClick={() => setStatusShown("active")}
             >
               Active
             </button>
             <button
-              className={`${statusShown === "completed" && "font-bold "}`}
+              className={`${
+                statusShown === "completed"
+                  ? "font-bold bg-sky-500/75"
+                  : "bg-sky-500/25"
+              } rounded-full py-1 px-2 text-white`}
               onClick={() => setStatusShown("completed")}
             >
               Completed
             </button>
           </div>
 
-          <button className="font-bold" onClick={deleteAllCompleted}>
+          <button
+            className="font-bold rounded-full bg-sky-500/75 px-2 py-1 text-white"
+            onClick={deleteAllCompleted}
+          >
             Clear All Completed
           </button>
         </div>

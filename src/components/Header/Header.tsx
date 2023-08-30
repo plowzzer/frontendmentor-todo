@@ -6,8 +6,8 @@ const Header: React.FC = () => {
   const { theme, changeTheme } = useThemeContext() as any;
 
   return (
-    <header className="bg-gradient-to-r from-cyan-500 to-blue-500 h-80 pt-28">
-      <div className="container mx-auto flex justify-between items-center">
+    <header className="bg-gradient-to-r from-cyan-500 to-blue-500 h-96 pt-28">
+      <div className="container p-2 mx-auto flex justify-between items-center">
         <h1 className="text-4xl tracking-wide font-bold uppercase text-white">
           TODO
         </h1>
